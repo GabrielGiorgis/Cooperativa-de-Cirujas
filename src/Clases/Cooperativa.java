@@ -9,6 +9,8 @@ public class Cooperativa {
     private ArrayList<Ciruja> cirujas;
 
     public Cooperativa() {
+        carros = new ArrayList<Carro>();
+        cirujas = new ArrayList<Ciruja>();
     }
 
     public Cooperativa(ArrayList<Carro> carros, ArrayList<Ciruja> cirujas) {
