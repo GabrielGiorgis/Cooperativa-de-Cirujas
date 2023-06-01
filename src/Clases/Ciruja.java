@@ -83,13 +83,13 @@ public class Ciruja {
     public void juntar(Material material, double n){
         double pesoActualCarro = n;
         if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
-            carros.setCapacidadActual(pesoActualCarro + material.getPeso());
-            System.out.println("Se cargaron "+material.getPeso()+"kgs, peso actual del carro "+carros.getCapacidadActual());
+            carros.setCargaActual(pesoActualCarro + material.getPeso());
+            System.out.println("Se cargaron "+material.getPeso()+"kgs, peso actual del carro "+carros.getCargaActual());
         }else if (pesoActualCarro < carros.getCapacidad()){
             double suma = pesoActualCarro + material.getPeso();
             material.setPeso(suma- carros.getCapacidad());
-            carros.setCapacidadActual(carros.getCapacidad());
-            System.out.println("No se pudo cargar todo el material, quedo sin recoger "+material.getPeso()+"kgs, peso actual del carro "+ carros.getCapacidadActual()+"kgs" );
+            carros.setCargaActual(carros.getCapacidad());
+            System.out.println("No se pudo cargar todo el material, quedo sin recoger "+material.getPeso()+"kgs, peso actual del carro "+ carros.getCargaActual()+"kgs" );
         }else{
             System.out.println("No se pueden cargar mas materiales, el material encontrado se quedara en su lugar");
         }

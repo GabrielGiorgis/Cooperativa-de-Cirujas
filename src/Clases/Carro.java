@@ -11,29 +11,27 @@ package Clases;
 public class Carro {
     private static int capacidad = 200;
     private int id;
-    private double capacidadActual;
+    private double cargaActual;
 
     public Carro() {
     }
 
     public Carro(int id, int capacidadActual) {
         this.id = id;
-        this.capacidadActual = capacidadActual;
+        this.cargaActual = capacidadActual;
     }
 
-    public double getCapacidadActual() {
-        return capacidadActual;
+    public double getCargaActual() {
+        return cargaActual;
     }
 
     public static void setCapacidad(int capacidad) {
         Carro.capacidad = capacidad;
     }
 
-    public void setCapacidadActual(double capacidadActual) {
-        this.capacidadActual = capacidadActual;
+    public void setCargaActual(double capacidadActual) {
+        this.cargaActual = capacidadActual;
     }
-
-    
 
     public int getCapacidad() {
         return capacidad;
