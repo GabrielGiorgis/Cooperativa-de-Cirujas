@@ -80,19 +80,24 @@ public class Ciruja {
         this.nombre = nombre;
     }
     
-    public void juntar(Material material, double n){
-        double pesoActualCarro = n;
-        if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
-            carros.setCargaActual(pesoActualCarro + material.getPeso());
-            System.out.println("Se cargaron "+material.getPeso()+"kgs, peso actual del carro "+carros.getCargaActual());
-        }else if (pesoActualCarro < carros.getCapacidad()){
-            double suma = pesoActualCarro + material.getPeso();
-            material.setPeso(suma- carros.getCapacidad());
-            carros.setCargaActual(carros.getCapacidad());
-            System.out.println("No se pudo cargar todo el material, quedo sin recoger "+material.getPeso()+"kgs, peso actual del carro "+ carros.getCargaActual()+"kgs" );
+    public void juntar(Material material){
+        if (especialidad.equals(material.getTipo())){
+            double pesoActualCarro = carros.getCargaActual();
+            if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
+                carros.setCargaActual(pesoActualCarro + material.getPeso());
+                System.out.println("Se cargaron "+material.getPeso()+"kgs, peso actual del carro "+carros.getCargaActual());
+                materiales.add(material);
+            }else if (pesoActualCarro < carros.getCapacidad()){
+                //double suma = pesoActualCarro + material.getPeso();
+                material.setPeso(carros.getCapacidad()-carros.getCargaActual());
+                carros.setCargaActual(carros.getCapacidad());
+                System.out.println("No se pudo cargar todo el material, quedo sin recoger "+material.getPeso()+"kgs, peso actual del carro "+ carros.getCargaActual()+"kgs" );
+                materiales.add(material);
+            }else{
+                System.out.println("No se pueden cargar mas materiales, el material encontrado se quedara en su lugar");
+            }
         }else{
-            System.out.println("No se pueden cargar mas materiales, el material encontrado se quedara en su lugar");
+            System.out.println("Este Ciruja no junta este tipo de material");
         }
-        
     }
 }
