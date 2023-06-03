@@ -34,31 +34,34 @@ public class Cooperativa {
         this.cirujas = cirujas;
     }
     
-    public void liquidar(Material material){
-        double precioCarton,precioVidrio, precioMetal, precioPapel, paga;
-        precioCarton = 10;
-        precioVidrio = 20;
-        precioMetal = 25;
-        precioPapel = 7;
-        paga = 0;
-        switch(material.getTipo()){
-            case "carton":
-                paga = material.getPeso()*precioCarton;
-            case "vidrio":
-                paga = material.getPeso()*precioVidrio;
-            case "metal":
-                paga = material.getPeso()*precioMetal;
-            case "papel":
-                paga = material.getPeso()*precioPapel;
+    public void liquidar(int n){
+        double precioVidrio, precioPapel, precioMetal;
+        //pongo los precios para cada material por kg
+        precioVidrio = 15;
+        precioPapel = 10;
+        precioMetal = 20;
+        double sueldo = 0;
+        //Recorro el array de materiales que tiene el ciruja y verifico que tipo es para acumularlo en el sueldo
+        for(int i = 0; i < cirujas.get(n).getMateriales().size();i++){
+            switch (cirujas.get(n).getMateriales().get(i).getTipo()){
+                case "vidrio":
+                    sueldo = sueldo + (cirujas.get(n).getMateriales().get(i).getPeso() * precioVidrio);
+                case "papel":
+                    sueldo = sueldo + (cirujas.get(n).getMateriales().get(i).getPeso() * precioPapel);
+                case "metal":
+                    sueldo = sueldo + (cirujas.get(n).getMateriales().get(i).getPeso() * precioMetal);
+            } 
         }
-        System.out.println("Se ha pagado un total de $"+paga);
+        System.out.println("El Ciruja cobró $"+sueldo);
     }
+    
     public void nuevoCarro(int n){
         System.out.println("Nuevo carro obtenido");
         Carro c = new Carro();
         c.setCargaActual(0);
-        c.setId(n);
-        System.out.println("ID: "+c.getId()+"Capacidad máxima: "+c.getCapacidad()+"Carga actual: "+c.getCargaActual());
+        c.setId(carros.size()+1);
+        System.out.println("Ciruja: "+cirujas.get(n).getNombre()+"\nID: "+c.getId()+"\nCapacidad máxima: "+c.getCapacidad()+"\nCarga actual: "+c.getCargaActual());
+        cirujas.get(n).setCarros(c);
         carros.add(c);
     }
 }

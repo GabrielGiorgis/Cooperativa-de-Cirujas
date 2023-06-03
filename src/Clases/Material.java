@@ -9,7 +9,7 @@ public class Material {
     public Material(double peso, String tipo) {
         this.peso = peso;
         this.tipo = tipo;
-    }
+    } 
 
     public Material() {
     }
@@ -30,7 +30,9 @@ public class Material {
         this.tipo = tipo;
     }
     
-    public void descuento(int n){
-        
+    public void descuento(){
+        if (tipo.equals("papel")){
+            peso = peso - ((peso*5)/100);
+        }
     }
 }
