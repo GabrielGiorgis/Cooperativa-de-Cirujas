@@ -34,7 +34,7 @@ public class Cooperativa {
         this.cirujas = cirujas;
     }
     
-    public void liquidar(int n){
+    public double liquidar(int n){
         double precioVidrio, precioPapel, precioMetal;
         //pongo los precios para cada material por kg
         precioVidrio = 15;
@@ -53,6 +53,7 @@ public class Cooperativa {
             } 
         }
         System.out.println("El Ciruja cobró $"+sueldo);
+        return sueldo;
     }
     
     public void nuevoCarro(int n){

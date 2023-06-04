@@ -9,7 +9,7 @@ package Clases;
  * @author admin
  */
 public class Carro {
-    private static int capacidad = 200;
+    private final int capacidad = 200;
     private int id;
     private double cargaActual;
 
@@ -23,10 +23,6 @@ public class Carro {
 
     public double getCargaActual() {
         return cargaActual;
-    }
-
-    public static void setCapacidad(int capacidad) {
-        Carro.capacidad = capacidad;
     }
 
     public void setCargaActual(double capacidadActual) {

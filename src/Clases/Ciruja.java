@@ -80,23 +80,28 @@ public class Ciruja {
         this.nombre = nombre;
     }
     
-    public void juntar(Material material){
+    public Material juntar(Material material){
         if (especialidad.equals(material.getTipo())){
             double pesoActualCarro = carros.getCargaActual();
             if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
                 carros.setCargaActual(pesoActualCarro + material.getPeso());
                 System.out.println("Se cargaron "+material.getPeso()+"kgs, peso actual del carro "+carros.getCargaActual());
                 materiales.add(material);
+                return material;
             }else if (pesoActualCarro < carros.getCapacidad()){
                 material.setPeso(carros.getCapacidad()-carros.getCargaActual());
                 carros.setCargaActual(carros.getCapacidad());
                 System.out.println("No se pudo cargar todo el material, quedo sin recoger "+material.getPeso()+"kgs, peso actual del carro "+ carros.getCargaActual()+"kgs" );
                 materiales.add(material);
+                return material;
             }else{
                 System.out.println("No se pueden cargar mas materiales, el material encontrado se quedara en su lugar");
+                return null;
             }
         }else{
             System.out.println("Este Ciruja no junta este tipo de material");
+            return null;
         }
     }
+    
 }

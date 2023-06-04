@@ -5,13 +5,23 @@ package Clases;
 public class Material {
     private double peso;
     private String tipo;
+    private int idExtraccion;
 
-    public Material(double peso, String tipo) {
+    public Material(double peso, String tipo, int idExtraccion) {
         this.peso = peso;
         this.tipo = tipo;
-    } 
+        this.idExtraccion = idExtraccion;
+    }
 
     public Material() {
+    }
+
+    public int getIdExtraccion() {
+        return idExtraccion;
+    }
+
+    public void setIdExtraccion(int idExtraccion) {
+        this.idExtraccion = idExtraccion;
     }
 
     public double getPeso() {
@@ -35,4 +45,5 @@ public class Material {
             peso = peso - ((peso*5)/100);
         }
     }
+    
 }
