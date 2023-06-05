@@ -4,6 +4,8 @@ import clases.*;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -18,11 +20,14 @@ public class styledMainFrame extends javax.swing.JFrame {
      * Creates new form styledMainFrame
      */
     public styledMainFrame() {
-        initComponents();
+        try {
+            initComponents();
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
         vista = (CardLayout) mainPanel.getLayout();
     }
-    
- 
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,8 +35,12 @@ public class styledMainFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
+    private void initComponents()throws Exception {
+        modifyCiruja = new EditCiruja();
+        addCiruja = new AddCiruja();
+        removeCiruja = new DeleteCiruja();
+        allCirujas = new AllCirujas();
+        
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         showAll = new javax.swing.JLabel();
@@ -75,8 +84,8 @@ public class styledMainFrame extends javax.swing.JFrame {
         deleteOne.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         deleteOne.setText("Eliminar");
         deleteOne.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        deleteOne.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        deleteOne.addMouseListener(new java.awt.event.MouseAdapter()  {
+            public void mouseClicked(java.awt.event.MouseEvent evt)  {
                 deleteOneMouseClicked(evt);
             }
         });
@@ -165,32 +174,44 @@ public class styledMainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void showAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAllMouseClicked
-        allCantantes.addComponents();
-        mainPanel.add(allCantantes, "allCantantes");
-        vista.show(mainPanel, "allCantantes");
+        try {
+            allCirujas.addComponents();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        mainPanel.add(allCirujas, "allCirujas");
+        vista.show(mainPanel, "allCirujas");
         SwingUtilities.updateComponentTreeUI(this);
         this.repaint();
     }//GEN-LAST:event_showAllMouseClicked
 
     private void editOneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editOneMouseClicked
-        modifyCantante.addComponents();
-        mainPanel.add(modifyCantante, "editCantante");
-        vista.show(mainPanel, "editCantante");
+        try {
+            modifyCiruja.addComponents();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        mainPanel.add(modifyCiruja, "editCiruja");
+        vista.show(mainPanel, "editCiruja");
         SwingUtilities.updateComponentTreeUI(this);
         this.repaint();
     }//GEN-LAST:event_editOneMouseClicked
 
     private void addOneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addOneMouseClicked
-        mainPanel.add(addCantante, "addCantante");
-        vista.show(mainPanel, "addCantante");
+        mainPanel.add(addCiruja, "addCiruja");
+        vista.show(mainPanel, "addCiruja");
         SwingUtilities.updateComponentTreeUI(this);
         this.repaint();
     }//GEN-LAST:event_addOneMouseClicked
 
     private void deleteOneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteOneMouseClicked
-        removeCantante.addComponents();
-        mainPanel.add(removeCantante, "deleteCantante");
-        vista.show(mainPanel, "deleteCantante");
+        try {
+            removeCiruja.addComponents();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        mainPanel.add(removeCiruja, "deleteCiruja");
+        vista.show(mainPanel, "deleteCiruja");
         SwingUtilities.updateComponentTreeUI(this);
         this.repaint();
     }//GEN-LAST:event_deleteOneMouseClicked
@@ -229,20 +250,21 @@ public class styledMainFrame extends javax.swing.JFrame {
             }
         });
     }
-    
+
     private JList<String> obtenerJListDesdePanel(JPanel panel) {
-    JList<String> jList = null;
-    
-    Component[] components = panel.getComponents();
-    for (Component component : components) {
-        if (component instanceof JList) {
-            jList = (JList<String>) component;
-            break;
+        JList<String> jList = null;
+
+        Component[] components = panel.getComponents();
+        for (Component component : components) {
+            if (component instanceof JList) {
+                jList = (JList<String>) component;
+                break;
+            }
         }
+
+        return jList;
     }
-    
-    return jList;
-}
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel addOne;
@@ -258,8 +280,8 @@ public class styledMainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel showAll;
     // End of variables declaration//GEN-END:variables
     public CardLayout vista;
-    public AddCiruja addCantante = new AddCiruja();
-    public EditCiruja modifyCantante = new EditCiruja();
-    public AllCirujas allCantantes = new AllCirujas();
-    public DeleteCiruja removeCantante = new DeleteCiruja();
+    public AddCiruja addCiruja;
+    public EditCiruja modifyCiruja;
+    public AllCirujas allCirujas;
+    public DeleteCiruja removeCiruja;
 }

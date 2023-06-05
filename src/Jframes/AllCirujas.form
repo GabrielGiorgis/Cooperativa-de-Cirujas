@@ -37,7 +37,9 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Component id="liquidar" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="visualizar" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
@@ -52,7 +54,10 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="150" max="-2" attributes="0"/>
               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-              <Component id="jButton1" min="-2" pref="28" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="visualizar" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Component id="liquidar" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace pref="108" max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -81,7 +86,7 @@
               <StringArray count="0"/>
             </Property>
             <Property name="cellRenderer" type="javax.swing.ListCellRenderer" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-              <Connection code="new javax.swing.DefaultListCellRenderer() {&#xd;&#xa;    {&#xd;&#xa;        setOpaque(true);&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    public java.awt.Component getListCellRendererComponent(javax.swing.JList&lt;?&gt; list, java.lang.Object value, int index, boolean isSelected, boolean cellHasFocus) {&#xd;&#xa;        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);&#xd;&#xa;&#xd;&#xa;        if (value instanceof Ciruja) {&#xd;&#xa;            Ciruja newCiruja = (Ciruja) value;//Ver si el nombre de la clase es ciruja&#xd;&#xa;            setText(newCiruja.nombre);&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        return this;&#xd;&#xa;    }&#xd;&#xa;}" type="code"/>
+              <Connection code="new javax.swing.DefaultListCellRenderer() {&#xd;&#xa;    {&#xd;&#xa;        setOpaque(true);&#xd;&#xa;    }&#xd;&#xa;&#xd;&#xa;    public java.awt.Component getListCellRendererComponent(javax.swing.JList&lt;?&gt; list, java.lang.Object value, int index, boolean isSelected, boolean cellHasFocus) {&#xd;&#xa;        super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);&#xd;&#xa;&#xd;&#xa;        if (value instanceof Ciruja) {&#xd;&#xa;            Ciruja newCiruja = (Ciruja) value;//Ver si el nombre de la clase es ciruja&#xd;&#xa;            setText(newCiruja.getNombre());&#xd;&#xa;        }&#xd;&#xa;&#xd;&#xa;        return this;&#xd;&#xa;    }&#xd;&#xa;}" type="code"/>
             </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Default Cursor"/>
@@ -92,13 +97,13 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JList&lt;Ciruja&gt;(listModel);&#xd; &#xd; "/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="for (Ciruja obj : Jframes.Main.cantantes) {//ac&#xe1; tengo que traer a todos los cirujas&#xd;&#xa;    listModel.addElement(obj);&#xd;&#xa;}&#xd;&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="for (Ciruja obj : CirujaDAO.getAll()) {//ac&#xe1; tengo que traer a todos los cirujas&#xd;&#xa;    listModel.addElement(obj);&#xd;&#xa;}&#xd;&#xa;"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Ciruja&gt;"/>
           </AuxValues>
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="visualizar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Ver ciruja"/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -106,7 +111,18 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="visualizarActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="liquidar">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Liquidar"/>
+        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+          <Color id="Hand Cursor"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="liquidarActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

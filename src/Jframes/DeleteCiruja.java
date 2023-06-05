@@ -1,9 +1,12 @@
 package Jframes;
 
-import clases.SerCantor;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import Clases.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import persistencia.*;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,7 +18,7 @@ public class DeleteCiruja extends javax.swing.JPanel {
     /**
      * Creates new form deleteCantante
      */
-    public DeleteCiruja() {
+    public DeleteCiruja() throws Exception {
         initComponents();
     }
 
@@ -26,11 +29,13 @@ public class DeleteCiruja extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws Exception {
 
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        for (Ciruja obj : Jframes.Main.cantantes) {      listModel.addElement(obj);  }  //Acá tengo que recibir de la base de datos a todos los cirujas
+        for (Ciruja obj : CirujaDAO.getAll()) {
+            listModel.addElement(obj);  
+        }  //Acá tengo que recibir de la base de datos a todos los cirujas
         jList1 = new JList<Ciruja>(listModel);
  
  ;
@@ -53,7 +58,7 @@ public class DeleteCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Ciruja) {
                     Ciruja newCiruja = (Ciruja) value;
-                    setText(newCiruja.nombre);
+                    setText(newCiruja.getNombre());
                 }
 
                 return this;
@@ -102,19 +107,22 @@ public class DeleteCiruja extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (jList1.getSelectedValue() != null) {
-//            JOptionPane.showMessageDialog(null, jList1.getSelectedValue());
-            for (int i = 0; i < Main.cantantes.size(); i++) {
-                if (Main.cantantes.get(i).nombre == jList1.getSelectedValue().nombre) {
-                    Main.cantantes.remove(i);
-                    addComponents();
+            for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+                if (Main.cooperativa.getCirujas().get(i).getNombre() == jList1.getSelectedValue().getNombre()) {
+                    Main.cooperativa.getCirujas().remove(i);
+                    try {
+                        addComponents();
+                    } catch (Exception ex) {
+                        Logger.getLogger(DeleteCiruja.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     this.repaint();
                 }
             }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-    public void addComponents() {
+    public void addComponents() throws Exception {
         listModel.clear();
-        for (SerCantor obj : Main.cantantes) {
+        for (Ciruja obj : CirujaDAO.getAll()) {
             listModel.addElement(obj);
         }
     }
@@ -125,5 +133,6 @@ public class DeleteCiruja extends javax.swing.JPanel {
     private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-DefaultListModel<SerCantor> listModel = new DefaultListModel<>();
+DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
+    CirujaDAO CirujaDAO = new CirujaDAO();
 }
