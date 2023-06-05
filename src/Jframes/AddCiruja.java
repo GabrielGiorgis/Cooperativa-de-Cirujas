@@ -18,6 +18,7 @@ public class AddCiruja extends javax.swing.JPanel {
      */
     public AddCiruja() {
         initComponents();
+        
     }
 
     /**
