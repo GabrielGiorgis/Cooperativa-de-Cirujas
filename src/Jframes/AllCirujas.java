@@ -1,6 +1,8 @@
 package Jframes;
 
-import clases.*;
+import Clases.*;
+import persistencia.*;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -14,7 +16,7 @@ public class AllCirujas extends javax.swing.JPanel {
     /**
      * Creates new form AllArtistas
      */
-    public AllCirujas() {
+    public AllCirujas() throws Exception {
         initComponents();
     }
 
@@ -25,17 +27,18 @@ public class AllCirujas extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws Exception {
 
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new JList<Ciruja>(listModel);
  
  ;
-        for (Ciruja obj : Jframes.Main.cantantes) {//acá tengo que traer a todos los cirujas
+        for (Ciruja obj : CirujaDAO.getAll()) {//acá tengo que traer a todos los cirujas
             listModel.addElement(obj);
         }
-        jButton1 = new javax.swing.JButton();
+        visualizar = new javax.swing.JButton();
+        liquidar = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(389, 381));
@@ -54,7 +57,7 @@ public class AllCirujas extends javax.swing.JPanel {
 
                 if (value instanceof Ciruja) {
                     Ciruja newCiruja = (Ciruja) value;//Ver si el nombre de la clase es ciruja
-                    setText(newCiruja.nombre);
+                    setText(newCiruja.getNombre());
                 }
 
                 return this;
@@ -68,11 +71,19 @@ public class AllCirujas extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jList1);
 
-        jButton1.setText("Ver ciruja");
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        visualizar.setText("Ver ciruja");
+        visualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        visualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                visualizarActionPerformed(evt);
+            }
+        });
+
+        liquidar.setText("Liquidar");
+        liquidar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        liquidar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                liquidarActionPerformed(evt);
             }
         });
 
@@ -91,7 +102,9 @@ public class AllCirujas extends javax.swing.JPanel {
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
+                        .addComponent(liquidar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(visualizar)))
                 .addGap(18, 18, 18))
         );
         layout.setVerticalGroup(
@@ -102,53 +115,58 @@ public class AllCirujas extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(visualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(liquidar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(108, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void visualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizarActionPerformed
 
-        SerCantor cantor = jList1.getSelectedValue();
-        String instrumentos = "";
+        Ciruja c = jList1.getSelectedValue();
         if (jList1.getSelectedValue() != null) {
-            if (jList1.getSelectedValue() instanceof Artista) {
-                instrumentos = ((Artista) jList1.getSelectedValue()).getInstrumentos();
+            String message = "Ciruja: n°" + c.getId() + "\n"
+                    + "Nombre: " + c.getNombre() + "\n"
+                    + "Fecha de ingreso: " + c.getFechaIngreso() + "\n"
+                    + "Especialidad: " + c.getEspecialidad() + "\n"
+                    + "Materiables recogidos: \n";
+            for (int i = 0; i < c.getMateriales().size(); i++) {
+                message += " -" + c.getMateriales().get(i).getTipo()
+                        + " (" + c.getMateriales().get(i).getPeso() + "kg)";
+                if (i != c.getMateriales().size() - 1) {
+                    message += ", ";
+                }
             }
-            if (jList1.getSelectedValue() instanceof Gallo) {
-                instrumentos = ((Gallo) jList1.getSelectedValue()).getInstrumentos();
-            }
-            if (jList1.getSelectedValue() instanceof Canario) {
-                instrumentos = ((Canario) jList1.getSelectedValue()).getInstrumentos();
-            }
-            if (instrumentos.equals("")) instrumentos = "Ninguno";
-            String estadoDeAnimo = cantor.cuando.isAlegria() ? "feliz" : "triste";
-            String message = "Nombre: " + cantor.nombre + "\n"
-                    + "Tipo de cantante: " + cantor.tipo + "\n"
-                    + "A las " + cantor.cuando.horario()
-                    + " se encontraba " + estadoDeAnimo + "\n"
-                    + "Instrumentos: " + instrumentos;
             JOptionPane.showMessageDialog(null, message);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_visualizarActionPerformed
 
     private void jList1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jList1FocusGained
 
     }//GEN-LAST:event_jList1FocusGained
 
-    public void addComponents() {
+    private void liquidarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidarActionPerformed
+        Ciruja ciruja = (Ciruja) jList1.getSelectedValue();
+        Main.cooperativa.liquidar(ciruja.getId());
+    }//GEN-LAST:event_liquidarActionPerformed
+
+    public void addComponents() throws Exception {
         listModel.clear();
-        for (SerCantor obj : Main.cantantes) {
+        ArrayList<Ciruja> cirujas = CirujaDAO.getAll();
+        for (Ciruja obj : cirujas) {
             listModel.addElement(obj);
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton liquidar;
+    private javax.swing.JButton visualizar;
     // End of variables declaration//GEN-END:variables
 
-    DefaultListModel<SerCantor> listModel = new DefaultListModel<>();
+    DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
+    CirujaDAO CirujaDAO = new CirujaDAO();
 }

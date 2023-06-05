@@ -1,7 +1,12 @@
 package Jframes;
 
-import clases.*;
+import Clases.*;
+import persistencia.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -15,7 +20,7 @@ public class EditCiruja extends javax.swing.JPanel {
     /**
      * Creates new form editCantante
      */
-    public EditCiruja() {
+    public EditCiruja() throws Exception {
         initComponents();
     }
 
@@ -26,14 +31,14 @@ public class EditCiruja extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents() throws Exception {
 
         jLabel4 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         nameField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        for (Ciruja obj : Jframes.Main.cantantes) {     
+        for (Ciruja obj : CirujaDAO.getAll()) {     
             listModel.addElement(obj); 
         } //Hay que recibir a todos los cirujas desde la base de datos
         javax.swing.JList<Ciruja> jList1 = new JList<Ciruja>(listModel);
@@ -46,7 +51,7 @@ public class EditCiruja extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        materialField = new JList<Material>(listModel);
+        materialField = new JList<Material>(materialModel);
 
         ;
         jLabel8 = new javax.swing.JLabel();
@@ -84,7 +89,7 @@ public class EditCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Ciruja) {
                     Ciruja newCiruja = (Ciruja) value;
-                    setText(newCiruja.nombre);
+                    setText(newCiruja.getNombre());
                 }
 
                 return this;
@@ -97,8 +102,7 @@ public class EditCiruja extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(jList1);
 
-        jButton3.setText("Eliminar instrumento");
-        jButton3.setActionCommand("Eliminar material");
+        jButton3.setText("Eliminar material");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -119,6 +123,11 @@ public class EditCiruja extends javax.swing.JPanel {
         jLabel7.setText("Materiales");
 
         jButton4.setText("Añadir material");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         materialField.setCellRenderer(new javax.swing.DefaultListCellRenderer() {
             {
@@ -130,7 +139,7 @@ public class EditCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Material) {
                     Material newMaterial = (Material) value;
-                    setText(newMaterial.nombre);
+                    setText(newMaterial.getTipo());
                 }
 
                 return this;
@@ -163,7 +172,6 @@ public class EditCiruja extends javax.swing.JPanel {
                                     .addComponent(jLabel6)
                                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nameField)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -223,77 +231,100 @@ public class EditCiruja extends javax.swing.JPanel {
     }//GEN-LAST:event_nameFieldActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        ArrayList<Instrumento> instrumentos = new ArrayList<>();
-        for (int i = 0; i < instrumentModel.getSize(); i++) {
-            instrumentos.add(instrumentModel.getElementAt(i));
+        String name = nameField.getText();
+        String specialty = specialtyField.getSelectedItem().toString();
+        String joined = joiningDate.getText();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            Date date = dateFormat.parse(joined);
+            calendar.setTime(date);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Fecha ingresada incorrectamente");
         }
-        for (int i = 0; i < Main.cantantes.size(); i++) {
-            if (Main.cantantes.get(i).nombre.equals(jList1.getSelectedValue().nombre)) {
-                switch (Main.cantantes.get(i).tipo.toLowerCase()) {
-                    case "persona": {
-                        Artista persona = new Artista(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()),instrumentos);
-                        Main.cantantes.set(i, persona);
-                        break;
-                    }
-                    case "gallo": {
-                        Gallo gallo = new Gallo(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
-                        Main.cantantes.set(i, gallo);
-                        break;
-                    }
-                    case "canario": {
-                        Canario canario = new Canario(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
-                        Main.cantantes.set(i, canario);
-                        break;
-                    }
-                    default: {
-                        break;
-                    }
-                }
-                addComponents();
-            }
+        ArrayList<Material> materiales = new ArrayList<>();
+
+        for (int i = 0; i < materialModel.getSize(); i++) {
+            materiales.add(materialModel.getElementAt(i));
         }
+
+        int cirujaId = jList1.getSelectedValue().getId();
+//        Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
+//        Main.cooperativa.nuevoCarro(cirujaId);
+//ACA HAY QUE EDITAR EL CIRUJA
+//        CirujaDAO.create(ciruja);
         nameField.setText("");
-        typeField.setSelectedItem("Persona");
-        instrumentModel.clear();
-        hapinessField.setSelected(false);
-        JOptionPane.showMessageDialog(null, "Cantante modificado");
-        this.repaint();
+        specialtyField.setSelectedItem("Ninguna");
+        joiningDate.setText("");
+        listModel.clear();
+        JOptionPane.showMessageDialog(null, "Ciruja modificado con éxito");
+//        ArrayList<Instrumento> instrumentos = new ArrayList<>();
+//        for (int i = 0; i < instrumentModel.getSize(); i++) {
+//            instrumentos.add(instrumentModel.getElementAt(i));
+//        }
+//        for (int i = 0; i < Main.cantantes.size(); i++) {
+//            if (Main.cantantes.get(i).nombre.equals(jList1.getSelectedValue().nombre)) {
+//                switch (Main.cantantes.get(i).tipo.toLowerCase()) {
+//                    case "persona": {
+//                        Artista persona = new Artista(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()),instrumentos);
+//                        Main.cantantes.set(i, persona);
+//                        break;
+//                    }
+//                    case "gallo": {
+//                        Gallo gallo = new Gallo(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
+//                        Main.cantantes.set(i, gallo);
+//                        break;
+//                    }
+//                    case "canario": {
+//                        Canario canario = new Canario(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
+//                        Main.cantantes.set(i, canario);
+//                        break;
+//                    }
+//                    default: {
+//                        break;
+//                    }
+//                }
+//                addComponents();
+//            }
+//        }
+//        nameField.setText("");
+//        typeField.setSelectedItem("Persona");
+//        instrumentModel.clear();
+//        hapinessField.setSelected(false);
+//        JOptionPane.showMessageDialog(null, "Cantante modificado");
+//        this.repaint();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jList1FocusGained
 
-        nameField.setText(jList1.getSelectedValue().nombre);
-        typeField.setSelectedItem(jList1.getSelectedValue().tipo);
-        hapinessField.setSelected(jList1.getSelectedValue().cuando.isAlegria());
-        ArrayList<Instrumento> instrumentos = new ArrayList<>();
-        if (jList1.getSelectedValue() instanceof Artista) {
-            instrumentos = ((Artista) jList1.getSelectedValue()).getArrayInstrumentos();
-        }
-        if (jList1.getSelectedValue() instanceof Gallo) {
-            instrumentos = ((Gallo) jList1.getSelectedValue()).getArrayInstrumentos();
-        }
-        if (jList1.getSelectedValue() instanceof Canario) {
-            instrumentos = ((Canario) jList1.getSelectedValue()).getArrayInstrumentos();
-        }
-        instrumentModel.clear();
-        for (int i = 0; i < instrumentos.size(); i++) {
-            instrumentModel.addElement(instrumentos.get(i));
+        nameField.setText(jList1.getSelectedValue().getNombre());
+        specialtyField.setSelectedItem(jList1.getSelectedValue().getEspecialidad());
+        joiningDate.setText(jList1.getSelectedValue().getFechaIngreso().toString());
+        ArrayList<Material> material = jList1.getSelectedValue().getMateriales();
+        materialModel.clear();
+        for (int i = 0; i < material.size(); i++) {
+            materialModel.addElement(material.get(i));
         }
     }//GEN-LAST:event_jList1FocusGained
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        if (instrumentField.getSelectedValue() != null) {
-            for (int i = 0; i < instrumentModel.getSize(); i++) {
-                if (instrumentField.getSelectedValue().nombre.equals(instrumentModel.getElementAt(i).nombre)) {
-                    instrumentModel.remove(i);
+        if (materialField.getSelectedValue() != null) {
+            for (int i = 0; i < materialModel.getSize(); i++) {
+                if (materialField.getSelectedValue().getTipo().equals(materialModel.getElementAt(i).getTipo())) {
+                    materialModel.remove(i);
                 }
             }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    public void addComponents() {
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    public void addComponents() throws Exception {
         listModel.clear();
-        for (SerCantor obj : Main.cantantes) {
+        ArrayList<Ciruja> cirujas = CirujaDAO.getAll();
+        for (Ciruja obj : cirujas) {
             listModel.addElement(obj);
         }
     }
@@ -310,11 +341,13 @@ public class EditCiruja extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JFormattedTextField joiningDate;
+    private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JList<Material> materialField;
     private javax.swing.JTextField nameField;
     private javax.swing.JComboBox<String> specialtyField;
     // End of variables declaration//GEN-END:variables
 
-    DefaultListModel<SerCantor> listModel = new DefaultListModel<>();
-    DefaultListModel<Instrumento> instrumentModel = new DefaultListModel<>();
+    DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
+    DefaultListModel<Material> materialModel = new DefaultListModel<>();
+    CirujaDAO CirujaDAO = new CirujaDAO();
 }

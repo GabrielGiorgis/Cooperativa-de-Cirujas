@@ -1,9 +1,13 @@
 package Jframes;
 
 import javax.swing.JOptionPane;
-import clases.*;
+import Clases.*;
+import persistencia.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
@@ -87,7 +91,8 @@ public class AddCiruja extends javax.swing.JPanel {
 
         jLabel3.setText("Fecha de ingreso");
 
-        joiningDate.setText("dd/mm/aaaa\n");
+        joiningDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
+        joiningDate.setText("dd/MM/aaaa");
         joiningDate.setToolTipText("");
         joiningDate.setInheritsPopupMenu(true);
         joiningDate.setName("joinDate"); // NOI18N
@@ -107,7 +112,7 @@ public class AddCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Material) {
                     Material newMaterial = (Material) value;
-                    setText(newMaterial.nombre);
+                    setText(newMaterial.getTipo());
                 }
 
                 return this;
@@ -214,39 +219,36 @@ public class AddCiruja extends javax.swing.JPanel {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         String name = nameField.getText();
-        String type = specialtyField.getSelectedItem().toString();
-        Boolean felicidad = hapinessField.isSelected();
-        ArrayList<Instrumento> instrumentos = new ArrayList<>();
+        String specialty = specialtyField.getSelectedItem().toString();
+        String joined = joiningDate.getText();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            Date date = dateFormat.parse(joined);
+            calendar.setTime(date);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Fecha ingresada incorrectamente");
+        }
+
+        ArrayList<Material> materiales = new ArrayList<>();
 
         for (int i = 0; i < listModel.getSize(); i++) {
-            instrumentos.add(listModel.getElementAt(i));
+//            MaterialesDAO.create(listModel.getElementAt(i));
+            materiales.add(listModel.getElementAt(i));
         }
 
-        switch (type.toLowerCase()) {
-            case "persona": {
-                Artista persona = new Artista(name, type, new Momento(getMoment(), felicidad), instrumentos);
-                Main.cantantes.add(persona);
-                break;
-            }
-            case "gallo": {
-                Gallo gallo = new Gallo(name, type, new Momento(getMoment(), felicidad), instrumentos);
-                Main.cantantes.add(gallo);
-                break;
-            }
-            case "canario": {
-                Canario canario = new Canario(name, type, new Momento(getMoment(), felicidad), instrumentos);
-                Main.cantantes.add(canario);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
+        int cirujaId = Main.cooperativa.getCirujas().size();
+        Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
+        Main.cooperativa.getCirujas().add(ciruja);
+        Main.cooperativa.nuevoCarro(cirujaId);
+
+//        CirujaDAO.create(ciruja);
+        
         nameField.setText("");
-        specialtyField.setSelectedItem("Persona");
+        specialtyField.setSelectedItem("Ninguna");
+        joiningDate.setText("");
         listModel.clear();
-        hapinessField.setSelected(false);
-        JOptionPane.showMessageDialog(null, "Cantante creado con éxito");
+        JOptionPane.showMessageDialog(null, "Ciruja creado con éxito");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void joiningDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joiningDateActionPerformed
@@ -255,13 +257,18 @@ public class AddCiruja extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        String input = JOptionPane.showInputDialog(null, "Ingrese el nombre del instrumento");
-        String type = JOptionPane.showInputDialog(null, "Ingrese el tipo de instrumento");
-
-        if (input.equals("") || type.equals("")) {
-            JOptionPane.showMessageDialog(typeField, "Datos ingresados incorrectamente, intente de nuevo");
+        String input = "";
+        if (specialtyField.getSelectedItem() != "Ninguna") {
+            input = (String) specialtyField.getSelectedItem();
         } else {
-            listModel.addElement(new Instrumento(input, type));
+            input = JOptionPane.showInputDialog(null, "Ingrese el nombre del material");
+        }
+        String weight = JOptionPane.showInputDialog(null, "Ingrese el peso encontrado");
+
+        if (input.equals("") || weight.equals("")) {
+            JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+        } else {
+            listModel.addElement(new Material(Double.parseDouble(weight), input, listModel.getSize()));
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -278,13 +285,7 @@ public class AddCiruja extends javax.swing.JPanel {
         }
         return "noche";
     }
-
-//    public void addComponents() {
-//        listModel.clear();
-//        for (Instrumento obj : listModel) {
-//            listModel.addElement(obj);
-//        }
-//    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
@@ -302,5 +303,5 @@ public class AddCiruja extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> specialtyField;
     // End of variables declaration//GEN-END:variables
 
-    DefaultListModel<Instrumento> listModel = new DefaultListModel<>();
+    DefaultListModel<Material> listModel = new DefaultListModel<>();
 }
