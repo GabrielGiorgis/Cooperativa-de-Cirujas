@@ -2,6 +2,7 @@
 package Clases;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import persistencia.MaterialDAO;
 
 
@@ -36,6 +37,12 @@ public class Cooperativa {
     }
     
     public double liquidar(int n) throws Exception{
+        //comision
+        Calendar actual = Calendar.getInstance();
+        int comision = actual.get(Calendar.YEAR) - cirujas.get(n).getFechaIngreso().get(Calendar.YEAR);
+        if (comision > 10 ){
+            comision = 10;
+        }
         double precioVidrio, precioPapel, precioMetal;
         //pongo los precios para cada material por kg
         precioVidrio = 15;
@@ -53,6 +60,7 @@ public class Cooperativa {
                     sueldo = sueldo + (cirujas.get(n).getMateriales().get(i).getPeso() * precioMetal);
             } 
         }
+        sueldo = sueldo - (sueldo * comision / 100);
         System.out.println("El Ciruja cobró $"+sueldo);
         MaterialDAO materialDAO = new MaterialDAO();
         materialDAO.deleteAll(cirujas.get(n).getId());
