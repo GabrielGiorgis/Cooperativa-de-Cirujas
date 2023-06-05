@@ -4,11 +4,13 @@
  */
 package Clases;
 
+import java.io.Serializable;
+
 /**
  *
  * @author admin
  */
-public class Carro {
+public class Carro implements Serializable {
     private final int capacidad = 200;
     private int id;
     private double cargaActual;

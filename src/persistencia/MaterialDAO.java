@@ -13,18 +13,23 @@ public class MaterialDAO extends DAO {
     public void create(int ciruja_id, Material material) throws Exception {
         try {
             if (material == null) {
+                System.out.println("Es null ");
                 throw new Exception("No válido");
             }
-            String sql = "INSERT INTO Material(ciruja_id, tipo, peso) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Material(ciruja_id, tipo, peso) VALUES (*, *, *)";
+            System.out.println(ciruja_id);
+            System.out.println(material.getTipo());
+            System.out.println(material.getPeso());
             PreparedStatement statement = conexion.prepareStatement(sql);
             statement.setInt(1, ciruja_id);
             statement.setString(2, material.getTipo());
             statement.setDouble(3, material.getPeso());
-
+            statement.executeUpdate();
+            
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {
-            throw new Exception("Error al guardar");
+            throw new Exception("Error al guardar material" +  e.getMessage());
         }
     }
 
@@ -93,6 +98,7 @@ public class MaterialDAO extends DAO {
             statement.setString(2, material.getTipo());
             statement.setDouble(3, material.getPeso());
             statement.setInt(4, material.getIdExtraccion());
+            statement.executeUpdate();
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {

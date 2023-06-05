@@ -1,8 +1,10 @@
 
 package Clases;
 
+import java.io.Serializable;
 
-public class Material {
+
+public class Material implements Serializable {
     private double peso;
     private String tipo;
     private int idExtraccion;

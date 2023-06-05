@@ -1,12 +1,11 @@
 
 package Clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import persistencia.MaterialDAO;
 
 
-public class Cooperativa {
+public class Cooperativa implements Serializable {
     private ArrayList<Carro> carros;
     private ArrayList<Ciruja> cirujas;
 
@@ -36,13 +35,7 @@ public class Cooperativa {
         this.cirujas = cirujas;
     }
     
-    public double liquidar(int n) throws Exception{
-        //comision
-        Calendar actual = Calendar.getInstance();
-        int comision = actual.get(Calendar.YEAR) - cirujas.get(n).getFechaIngreso().get(Calendar.YEAR);
-        if (comision > 10 ){
-            comision = 10;
-        }
+    public double liquidar(int n){
         double precioVidrio, precioPapel, precioMetal;
         //pongo los precios para cada material por kg
         precioVidrio = 15;
@@ -60,14 +53,11 @@ public class Cooperativa {
                     sueldo = sueldo + (cirujas.get(n).getMateriales().get(i).getPeso() * precioMetal);
             } 
         }
-        sueldo = sueldo - (sueldo * comision / 100);
         System.out.println("El Ciruja cobró $"+sueldo);
-        MaterialDAO materialDAO = new MaterialDAO();
-        materialDAO.deleteAll(cirujas.get(n).getId());
         return sueldo;
     }
     
-    public void nuevoCarro(int n){
+    public Carro nuevoCarro(int n){
         System.out.println("Nuevo carro obtenido");
         Carro c = new Carro();
         c.setCargaActual(0);
@@ -75,5 +65,6 @@ public class Cooperativa {
         System.out.println("Ciruja: "+cirujas.get(n).getNombre()+"\nID: "+c.getId()+"\nCapacidad máxima: "+c.getCapacidad()+"\nCarga actual: "+c.getCargaActual());
         cirujas.get(n).setCarros(c);
         carros.add(c);
+        return c;
     }
 }

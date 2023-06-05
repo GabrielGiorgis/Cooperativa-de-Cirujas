@@ -249,50 +249,19 @@ public class EditCiruja extends javax.swing.JPanel {
         }
 
         int cirujaId = jList1.getSelectedValue().getId();
-//        Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
+        Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
 //        Main.cooperativa.nuevoCarro(cirujaId);
 //ACA HAY QUE EDITAR EL CIRUJA
-//        CirujaDAO.create(ciruja);
+        try {
+            CirujaDAO.update(ciruja);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         nameField.setText("");
         specialtyField.setSelectedItem("Ninguna");
         joiningDate.setText("");
         listModel.clear();
         JOptionPane.showMessageDialog(null, "Ciruja modificado con éxito");
-//        ArrayList<Instrumento> instrumentos = new ArrayList<>();
-//        for (int i = 0; i < instrumentModel.getSize(); i++) {
-//            instrumentos.add(instrumentModel.getElementAt(i));
-//        }
-//        for (int i = 0; i < Main.cantantes.size(); i++) {
-//            if (Main.cantantes.get(i).nombre.equals(jList1.getSelectedValue().nombre)) {
-//                switch (Main.cantantes.get(i).tipo.toLowerCase()) {
-//                    case "persona": {
-//                        Artista persona = new Artista(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()),instrumentos);
-//                        Main.cantantes.set(i, persona);
-//                        break;
-//                    }
-//                    case "gallo": {
-//                        Gallo gallo = new Gallo(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
-//                        Main.cantantes.set(i, gallo);
-//                        break;
-//                    }
-//                    case "canario": {
-//                        Canario canario = new Canario(nameField.getText(), typeField.getSelectedItem().toString(), new Momento(Main.cantantes.get(i).cuando.getTipo(), hapinessField.isSelected()), instrumentos);
-//                        Main.cantantes.set(i, canario);
-//                        break;
-//                    }
-//                    default: {
-//                        break;
-//                    }
-//                }
-//                addComponents();
-//            }
-//        }
-//        nameField.setText("");
-//        typeField.setSelectedItem("Persona");
-//        instrumentModel.clear();
-//        hapinessField.setSelected(false);
-//        JOptionPane.showMessageDialog(null, "Cantante modificado");
-//        this.repaint();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jList1FocusGained
@@ -318,7 +287,19 @@ public class EditCiruja extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        String input = "";
+        if (specialtyField.getSelectedItem() != "Ninguna") {
+            input = (String) specialtyField.getSelectedItem();
+        } else {
+            input = JOptionPane.showInputDialog(null, "Ingrese el nombre del material");
+        }
+        String weight = JOptionPane.showInputDialog(null, "Ingrese el peso encontrado");
+
+        if (input.equals("") || weight.equals("")) {
+            JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+        } else {
+            materialModel.addElement(new Material(Double.parseDouble(weight), input, listModel.getSize()));
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     public void addComponents() throws Exception {

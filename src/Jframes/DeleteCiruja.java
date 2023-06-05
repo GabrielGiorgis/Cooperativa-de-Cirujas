@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import Clases.*;
+import Proyecto_p2.Main;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import persistencia.*;
@@ -112,6 +113,7 @@ public class DeleteCiruja extends javax.swing.JPanel {
                     Main.cooperativa.getCirujas().remove(i);
                     try {
                         addComponents();
+                        CirujaDAO.delete(i);
                     } catch (Exception ex) {
                         Logger.getLogger(DeleteCiruja.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -133,6 +135,6 @@ public class DeleteCiruja extends javax.swing.JPanel {
     private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
+    DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
     CirujaDAO CirujaDAO = new CirujaDAO();
 }

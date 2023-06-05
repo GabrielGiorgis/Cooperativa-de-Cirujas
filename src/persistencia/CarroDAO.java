@@ -18,7 +18,7 @@ public class CarroDAO extends DAO {
             PreparedStatement statement = conexion.prepareStatement(sql);
             statement.setInt(1, ciruja_id);
             statement.setDouble(2, carro.getCargaActual());
-
+            statement.executeUpdate();
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {
@@ -87,6 +87,7 @@ public class CarroDAO extends DAO {
             PreparedStatement statement = conexion.prepareStatement(sql);
             statement.setInt(1, ciruja_id);
             statement.setDouble(2, carro.getCargaActual());
+            statement.executeUpdate();
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {

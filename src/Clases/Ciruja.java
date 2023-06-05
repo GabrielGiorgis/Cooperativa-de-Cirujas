@@ -4,6 +4,7 @@
  */
 package Clases;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -12,7 +13,7 @@ import java.util.Calendar;
  *
  * @author admin
  */
-public class Ciruja {
+public class Ciruja implements Serializable{
     private Carro carros;
     private String especialidad;
     private Calendar fechaIngreso;
@@ -23,8 +24,7 @@ public class Ciruja {
     public Ciruja() {
     }
 
-    public Ciruja(Carro carros, String especialidad, Calendar fechaIngreso, int id, ArrayList<Material> materiales, String nombre) {
-        this.carros = carros;
+    public Ciruja(String especialidad, Calendar fechaIngreso, int id, ArrayList<Material> materiales, String nombre) {
         this.especialidad = especialidad;
         this.fechaIngreso = fechaIngreso;
         this.id = id;

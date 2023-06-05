@@ -11,7 +11,7 @@ public class DAO {
     private String USUARIO = "root";
     private String CLAVE = "";
     private String CONTROLADOR = "com.mysql.cj.jdbc.Driver";
-    private String url = "jdbc:mysql://localhost::3306/cooperativa_cirujas?zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private String url = "jdbc:mysql://127.0.0.1:3306/cooperativa_cirujas";
     
     protected void conectarBase() throws ClassNotFoundException, SQLException {
         try {

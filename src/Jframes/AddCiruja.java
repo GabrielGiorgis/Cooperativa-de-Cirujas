@@ -3,6 +3,7 @@ package Jframes;
 import javax.swing.JOptionPane;
 import Clases.*;
 import persistencia.*;
+import Proyecto_p2.Main;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ public class AddCiruja extends javax.swing.JPanel {
      */
     public AddCiruja() {
         initComponents();
-        
     }
 
     /**
@@ -233,17 +233,27 @@ public class AddCiruja extends javax.swing.JPanel {
 
         ArrayList<Material> materiales = new ArrayList<>();
 
-        for (int i = 0; i < listModel.getSize(); i++) {
-//            MaterialesDAO.create(listModel.getElementAt(i));
-            materiales.add(listModel.getElementAt(i));
-        }
-
         int cirujaId = Main.cooperativa.getCirujas().size();
+        
+
         Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
         Main.cooperativa.getCirujas().add(ciruja);
-        Main.cooperativa.nuevoCarro(cirujaId);
+        Carro carro = Main.cooperativa.nuevoCarro(cirujaId);
 
-//        CirujaDAO.create(ciruja);
+        try {
+            System.out.println("Crear ciruja");
+            CirujaDAO.create(ciruja, carro);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        for (int i = 0; i < listModel.getSize(); i++) {
+            try {
+                MaterialDAO.create(cirujaId, listModel.getElementAt(i));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            materiales.add(listModel.getElementAt(i));
+        }
         
         nameField.setText("");
         specialtyField.setSelectedItem("Ninguna");
@@ -286,7 +296,7 @@ public class AddCiruja extends javax.swing.JPanel {
         }
         return "noche";
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
@@ -305,4 +315,6 @@ public class AddCiruja extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     DefaultListModel<Material> listModel = new DefaultListModel<>();
+    MaterialDAO MaterialDAO = new MaterialDAO();
+    CirujaDAO CirujaDAO = new CirujaDAO();
 }

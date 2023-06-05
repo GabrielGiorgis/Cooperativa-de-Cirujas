@@ -2,6 +2,7 @@ package Jframes;
 
 import Clases.*;
 import persistencia.*;
+import Proyecto_p2.Main;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
