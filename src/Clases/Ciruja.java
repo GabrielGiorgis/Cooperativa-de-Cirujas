@@ -81,7 +81,7 @@ public class Ciruja implements Serializable{
     }
     
     public Material juntar(Material material){
-        if (especialidad.equals(material.getTipo())){
+        if (especialidad.equalsIgnoreCase(material.getTipo())){
             double pesoActualCarro = carros.getCargaActual();
             if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
                 carros.setCargaActual(pesoActualCarro + material.getPeso());
