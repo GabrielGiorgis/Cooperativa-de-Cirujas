@@ -1,11 +1,11 @@
 package Jframes;
 
-import clases.*;
+import Proyecto_p2.Main;
+import Clases.*;
+import persistencia.*;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -20,6 +20,7 @@ public class styledMainFrame extends javax.swing.JFrame {
      * Creates new form styledMainFrame
      */
     public styledMainFrame() {
+        poblarArrays();
         try {
             initComponents();
         } catch (Exception ex) {
@@ -284,4 +285,37 @@ public class styledMainFrame extends javax.swing.JFrame {
     public EditCiruja modifyCiruja;
     public AllCirujas allCirujas;
     public DeleteCiruja removeCiruja;
+    public CirujaDAO cirujaDAO = new CirujaDAO();
+    public CarroDAO carroDAO = new CarroDAO();
+    public MaterialDAO materialDAO = new MaterialDAO();
+
+    private void poblarArrays() {
+        //Obteniendo todos los cirujas
+        ArrayList<Ciruja> cirujasBase = new ArrayList<>();
+        try {
+            cirujasBase = cirujaDAO.getAll();
+        } catch (Exception e) {
+            System.out.println(e + " problema al traer cirujas");
+        }
+
+        ArrayList<Material> materialesBase = new ArrayList<>();
+        Carro carro = null;
+
+        for (int i = 0; i < cirujasBase.size(); i++) {
+            //Obteniendo materiales y carro de un ciruja usando su id
+            try {
+                materialesBase = materialDAO.getAllByCirujaId(cirujasBase.get(i).getId());
+                carro = carroDAO.getByCirujaId(cirujasBase.get(i).getId());
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            //guardando materiales y carro en dicho ciruja
+            cirujasBase.get(i).setMateriales(materialesBase);
+            cirujasBase.get(i).setCarros(carro);
+            //poblando los arrays locales con los cirujas y los carros de la base de datos
+            Main.cooperativa.getCirujas().add(cirujasBase.get(i));
+            Main.cooperativa.getCarros().add(carro);
+        }
+    }
 }

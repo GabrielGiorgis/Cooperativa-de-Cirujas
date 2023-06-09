@@ -3,7 +3,9 @@ package Jframes;
 import Clases.*;
 import persistencia.*;
 import Proyecto_p2.Main;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -28,14 +30,15 @@ public class AllCirujas extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() throws Exception {
+    private void initComponents() {
 
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new JList<Ciruja>(listModel);
  
  ;
-        for (Ciruja obj : CirujaDAO.getAll()) {//acá tengo que traer a todos los cirujas
+        listModel.clear();
+        for (Ciruja obj : Main.cooperativa.getCirujas()) {//acá tengo que traer a todos los cirujas
             listModel.addElement(obj);
         }
         visualizar = new javax.swing.JButton();
@@ -125,21 +128,41 @@ public class AllCirujas extends javax.swing.JPanel {
 
     private void visualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_visualizarActionPerformed
 
-        Ciruja c = jList1.getSelectedValue();
         if (jList1.getSelectedValue() != null) {
-            String message = "Ciruja: n°" + c.getId() + "\n"
-                    + "Nombre: " + c.getNombre() + "\n"
-                    + "Fecha de ingreso: " + c.getFechaIngreso() + "\n"
-                    + "Especialidad: " + c.getEspecialidad() + "\n"
-                    + "Materiables recogidos: \n";
-            for (int i = 0; i < c.getMateriales().size(); i++) {
-                message += " -" + c.getMateriales().get(i).getTipo()
-                        + " (" + c.getMateriales().get(i).getPeso() + "kg)";
-                if (i != c.getMateriales().size() - 1) {
-                    message += ", ";
+            int idCiruja = jList1.getSelectedValue().getId();
+            //Necesito tener el indice del ciruja que tiene dicho idCiruja localmente
+            int indiceLocal = 0;
+            for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == idCiruja) {
+                    indiceLocal = i;
                 }
             }
-            JOptionPane.showMessageDialog(null, message);
+            Ciruja c = Main.cooperativa.getCirujas().get(indiceLocal);
+
+            Calendar fechaIngreso = c.getFechaIngreso();
+            SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yy");
+            String fechaFormateada = formatoFecha.format(fechaIngreso.getTime());
+
+            //No se repinta cuando agrego materiales a un ciruja
+            if (jList1.getSelectedValue() != null) {
+                String message = "Ciruja: " + idCiruja + "\n"
+                        + "Nombre: " + c.getNombre() + "\n"
+                        + "Fecha de ingreso: " + fechaFormateada + "\n"
+                        + "Especialidad: " + c.getEspecialidad() + "\n";
+
+                //String materiales
+                if (!c.getMateriales().isEmpty()) {
+                    message += "Materiables recogidos: \n";
+                    for (int i = 0; i < c.getMateriales().size(); i++) {
+                        message += " -" + c.getMateriales().get(i).getTipo()
+                                + " (" + c.getMateriales().get(i).getPeso() + "kg)";
+                        if (i != c.getMateriales().size() - 1) {
+                            message += ", \n";
+                        }
+                    }
+                }
+                JOptionPane.showMessageDialog(null, message);
+            }
         }
     }//GEN-LAST:event_visualizarActionPerformed
 
@@ -149,12 +172,29 @@ public class AllCirujas extends javax.swing.JPanel {
 
     private void liquidarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_liquidarActionPerformed
         Ciruja ciruja = (Ciruja) jList1.getSelectedValue();
-        Main.cooperativa.liquidar(ciruja.getId());
+        int indiceLocal = 0;
+        for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+            if (Main.cooperativa.getCirujas().get(i).getId() == ciruja.getId()) {
+                indiceLocal = i;
+            }
+        }
+        Double sueldo = Main.cooperativa.liquidar(indiceLocal);
+        if (sueldo != 0) {
+            JOptionPane.showMessageDialog(null, ciruja.getNombre() + " cobró $" + sueldo);
+        } else {
+            JOptionPane.showMessageDialog(null, ciruja.getNombre() + " no cuenta con materiales");
+        }
+        addComponents();
     }//GEN-LAST:event_liquidarActionPerformed
 
-    public void addComponents() throws Exception {
+    public void addComponents() {
         listModel.clear();
-        ArrayList<Ciruja> cirujas = CirujaDAO.getAll();
+        ArrayList<Ciruja> cirujas = new ArrayList<>();
+        try {
+            cirujas = CirujaDAO.getAll();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         for (Ciruja obj : cirujas) {
             listModel.addElement(obj);
         }

@@ -14,22 +14,18 @@ public class CarroDAO extends DAO {
             if (carro == null) {
                 throw new Exception("No válido");
             }
-            String sql = "INSERT INTO Carro(ciruja_id, cargaActual) VALUES(?, ?);";
-            PreparedStatement statement = conexion.prepareStatement(sql);
-            statement.setInt(1, ciruja_id);
-            statement.setDouble(2, carro.getCargaActual());
-            statement.executeUpdate();
+            String sql = "INSERT INTO Carro(ciruja_id, cargaActual) VALUES(" + ciruja_id + ", " + carro.getCargaActual() + ");";
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {
-            throw new Exception("Error al guardar");
+            throw new Exception("Error al guardar carro" + e.getMessage());
         }
     }
 
     // READ ONE
-    public Carro getOne(int idCarro) throws Exception {
+    public Carro getByCirujaId(int idCiruja) throws Exception {
         try {
-            String consulta = "SELECT * FROM Carro WHERE idCarro = " + idCarro + ";";
+            String consulta = "SELECT * FROM Carro WHERE ciruja_id = " + idCiruja + ";";
 
             consultarBase(consulta);
 
@@ -83,11 +79,7 @@ public class CarroDAO extends DAO {
             if (carro == null) {
                 throw new Exception("No válido");
             }
-            String sql = "UPDATE Carro SET ciruja_id = ? cargaActual = ? WHERE idCarro = " + carro.getId() + ";";
-            PreparedStatement statement = conexion.prepareStatement(sql);
-            statement.setInt(1, ciruja_id);
-            statement.setDouble(2, carro.getCargaActual());
-            statement.executeUpdate();
+            String sql = "UPDATE Carro SET ciruja_id = "+ciruja_id+", cargaActual = "+carro.getCargaActual()+" WHERE idCarro = " + carro.getId() + ";";
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {
@@ -96,10 +88,10 @@ public class CarroDAO extends DAO {
     }
 
     // DELETE
-    public void delete(int idCarro) throws Exception {
+    public void delete(int idCiruja) throws Exception {
         try {
 
-            String query = "DELETE FROM Carro WHERE idCarro = " + idCarro + ";";
+            String query = "DELETE FROM Carro WHERE ciruja_id = " + idCiruja + ";";
             System.out.println(query);
             agregarModificarEliminar(query);
         } catch (Exception e) {

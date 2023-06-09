@@ -20,52 +20,33 @@ public final class CirujaDAO extends DAO {
                 throw new Exception("No válido");
             }
 
-            String sql = "INSERT INTO Ciruja(nombre, especialidad, fechaIngreso) VALUES (*, *, *)";
-            PreparedStatement statement = conexion.prepareStatement(sql);
-            statement.setString(1, ciruja.getNombre());
-            statement.setString(2, ciruja.getEspecialidad());
-            statement.setDate(3, new java.sql.Date(ciruja.getFechaIngreso().getTimeInMillis()));
-
-            int ciruja_id = Main.cooperativa.getCirujas().size();
-            CarroDAO carroDAO = new CarroDAO();
-            System.out.println("flag 1");
-            carroDAO.create(ciruja_id, carro);
-
-            MaterialDAO materialDAO = new MaterialDAO();
-            if (ciruja.getMateriales().size() > 0) {
-                for (int i = 0; i < ciruja.getMateriales().size(); i++) {
-                    System.out.println("flag 2");
-                    materialDAO.create(ciruja_id, ciruja.getMateriales().get(i));
-                }
-            }
-            statement.executeUpdate();
-            System.out.println(sql);
-            System.out.println("flag 3");
+            String sql = "INSERT INTO Ciruja(nombre, especialidad, fechaIngreso) VALUES ('" + ciruja.getNombre() + "', '" + ciruja.getEspecialidad() + "', '" + new java.sql.Date(ciruja.getFechaIngreso().getTime().getTime()) + "')";
             agregarModificarEliminar(sql);
+            System.out.println("flag 1");
+            System.out.println(sql);
+            CarroDAO carroDAO = new CarroDAO();
+            carroDAO.create(ciruja.getId(), carro);
 
         } catch (Exception e) {
-            throw new Exception("Error al guardar");
+            throw new Exception("CirujaDAO Error al guardar " + e);
         }
     }
 
     // READ ONE
     public Ciruja getOne(int id) throws Exception {
         try {
-            String sql = "SELECT * FROM Ciruja WHERE id = ?";
-            PreparedStatement statement = conexion.prepareStatement(sql);
-            statement.setInt(1, id);
-
+            String sql = "SELECT * FROM Ciruja WHERE id = " + id;
             Ciruja ciruja = null;
 
+            consultarBase(sql);
             if (resultado.next()) {
                 ciruja = new Ciruja();
-
                 ciruja.setId(resultado.getInt(1));
                 ciruja.setNombre(resultado.getString(2));
-                ciruja.setEspecialidad(resultado.getString(3));
+                ciruja.setEspecialidad(resultado.getString(4));
 
                 Calendar fechaIngreso = Calendar.getInstance();
-                fechaIngreso.setTimeInMillis(resultado.getTimestamp(4).getTime());
+                fechaIngreso.setTimeInMillis(resultado.getTimestamp(3).getTime());
                 ciruja.setFechaIngreso(fechaIngreso);
             }
 
@@ -93,10 +74,10 @@ public final class CirujaDAO extends DAO {
 
                 ciruja.setId(resultado.getInt(1));
                 ciruja.setNombre(resultado.getString(2));
-                ciruja.setEspecialidad(resultado.getString(3));
+                ciruja.setEspecialidad(resultado.getString(4));
 
                 Calendar fechaIngreso = Calendar.getInstance();
-                fechaIngreso.setTimeInMillis(resultado.getTimestamp(4).getTime());
+                fechaIngreso.setTimeInMillis(resultado.getTimestamp(3).getTime());
                 ciruja.setFechaIngreso(fechaIngreso);
 
                 listaCirujas.add(ciruja);
@@ -125,16 +106,13 @@ public final class CirujaDAO extends DAO {
                     }
                 }
                 if (cambios == 1) {
-                    materialDao.deleteOne(cirujaPrevio.getMateriales().get(i).getIdExtraccion());
+                    materialDao.deleteOne(cirujaPrevio.getId(), cirujaPrevio.getMateriales().get(i).getIdExtraccion());
                 }
             }
-            String sql = "UPDATE Ciruja SET nombre = *, especialidad = *, fechaIngreso = * WHERE id = *";
-            PreparedStatement statement = conexion.prepareStatement(sql);
-            statement.setString(1, ciruja.getNombre());
-            statement.setString(2, ciruja.getEspecialidad());
-            statement.setDate(3, new java.sql.Date(ciruja.getFechaIngreso().getTimeInMillis()));
-            statement.setInt(4, ciruja.getId());
-            statement.executeUpdate();
+            String sql = "UPDATE Ciruja SET nombre = '" + ciruja.getNombre() + "', especialidad = '"
+                    + ciruja.getEspecialidad() + "', fechaIngreso = '"
+                    + new java.sql.Date(ciruja.getFechaIngreso().getTimeInMillis())
+                    + "' WHERE id = " + ciruja.getId();
             System.out.println(sql);
             agregarModificarEliminar(sql);
         } catch (Exception e) {
@@ -148,10 +126,14 @@ public final class CirujaDAO extends DAO {
             Ciruja ciruja = getOne(id);
             CarroDAO carroDao = new CarroDAO();
             MaterialDAO materialDao = new MaterialDAO();
-            for (int i = 0; i < ciruja.getMateriales().size(); i++) {
-                materialDao.deleteOne(ciruja.getMateriales().get(i).getIdExtraccion());
+            ArrayList<Material> materiales = materialDao.getAllByCirujaId(id);
+
+            if (!materiales.isEmpty()) {
+                materialDao.deleteAll(id);
             }
-            carroDao.delete(ciruja.getCarros().getId());
+
+            carroDao.delete(ciruja.getId());
+
             String query = "DELETE FROM Ciruja WHERE id = " + id + ";";
             System.out.println(query);
             agregarModificarEliminar(query);

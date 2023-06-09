@@ -113,7 +113,7 @@ public class AddCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Material) {
                     Material newMaterial = (Material) value;
-                    setText(newMaterial.getTipo());
+                    setText(newMaterial.getTipo() + " (" + newMaterial.getPeso() + "kg)");
                 }
 
                 return this;
@@ -233,31 +233,47 @@ public class AddCiruja extends javax.swing.JPanel {
 
         ArrayList<Material> materiales = new ArrayList<>();
 
-        int cirujaId = Main.cooperativa.getCirujas().size();
-        
+        int cirujaId = 0;
+        try {
+            ArrayList<Ciruja> allCirujas = CirujaDAO.getAll();
+            cirujaId = allCirujas.get(allCirujas.size() - 1).getId() + 1;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
+        //Se crea el ciruja, se mete en el array de cooperativa y se le asigna un carro
         Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
         Main.cooperativa.getCirujas().add(ciruja);
-        Carro carro = Main.cooperativa.nuevoCarro(cirujaId);
 
+        int indiceLocal = Main.cooperativa.getCirujas().size() - 1;
+
+        Carro carro = Main.cooperativa.nuevoCarro(indiceLocal);
+
+        //Se ingresa el ciruja a la base de datos
         try {
             System.out.println("Crear ciruja");
             CirujaDAO.create(ciruja, carro);
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("addCiruja: " + e.getMessage());
         }
+
+        //Se crean los materiales pertenecientes a los cirujas en la base de datos.
         for (int i = 0; i < listModel.getSize(); i++) {
+            carro.setCargaActual(listModel.getElementAt(i).getPeso());
             try {
                 MaterialDAO.create(cirujaId, listModel.getElementAt(i));
+                materiales.add(listModel.getElementAt(i));
+                CarroDAO.update(cirujaId, carro);
             } catch (Exception e) {
                 System.out.println(e);
             }
-            materiales.add(listModel.getElementAt(i));
         }
-        
+
+        ciruja.setMateriales(materiales);
+
         nameField.setText("");
         specialtyField.setSelectedItem("Ninguna");
-        joiningDate.setText("");
+        joiningDate.setText("dd/MM/aaaa");
         listModel.clear();
         JOptionPane.showMessageDialog(null, "Ciruja creado con éxito");
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -267,35 +283,33 @@ public class AddCiruja extends javax.swing.JPanel {
     }//GEN-LAST:event_joiningDateActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
         String input = "";
-        if (specialtyField.getSelectedItem() != "Ninguna") {
-            input = (String) specialtyField.getSelectedItem();
-        } else {
-            input = JOptionPane.showInputDialog(null, "Ingrese el nombre del material");
-        }
-        String weight = JOptionPane.showInputDialog(null, "Ingrese el peso encontrado");
 
-        if (input.equals("") || weight.equals("")) {
-            JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+        if (specialtyField.getSelectedItem() != "Ninguna") {
+            input = specialtyField.getSelectedItem().toString();
         } else {
-            listModel.addElement(new Material(Double.parseDouble(weight), input, listModel.getSize()));
+            input = JOptionPane.showInputDialog(null, "Ingrese el tipo de material");
+        }
+
+        String weight = JOptionPane.showInputDialog(null, "Ingrese el peso del material");
+        double pesoTotal = 0;
+        for (int i = 0; i < listModel.getSize(); i++) {
+            pesoTotal += listModel.getElementAt(i).getPeso();
+        }
+        if (pesoTotal + Double.parseDouble(weight) > 200) {
+            JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + pesoTotal);weight = "";
+        } else {
+            pesoTotal = Double.parseDouble(weight);
+            if (input.equals("") || weight.equals("")) {
+                JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+            } else {
+                if (pesoTotal <= 200) {
+                    listModel.addElement(new Material(Double.parseDouble(weight), input, listModel.getSize()));
+                }
+            }
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    public String getMoment() {
-        int actualTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        if (actualTime > 0 && actualTime < 12) {
-            return "mañana";
-        }
-        if (actualTime >= 12 && actualTime < 13) {
-            return "mediodía";
-        }
-        if (actualTime >= 13 && actualTime < 19) {
-            return "tarde";
-        }
-        return "noche";
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -317,4 +331,5 @@ public class AddCiruja extends javax.swing.JPanel {
     DefaultListModel<Material> listModel = new DefaultListModel<>();
     MaterialDAO MaterialDAO = new MaterialDAO();
     CirujaDAO CirujaDAO = new CirujaDAO();
+    CarroDAO CarroDAO = new CarroDAO();
 }

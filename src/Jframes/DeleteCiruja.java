@@ -108,23 +108,33 @@ public class DeleteCiruja extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (jList1.getSelectedValue() != null) {
+            int idCiruja = jList1.getSelectedValue().getId();
+
+            //Necesito tener el indice del ciruja que tiene el idCiruja
             for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
-                if (Main.cooperativa.getCirujas().get(i).getNombre() == jList1.getSelectedValue().getNombre()) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == (idCiruja - 1)) {
                     Main.cooperativa.getCirujas().remove(i);
-                    try {
-                        addComponents();
-                        CirujaDAO.delete(i);
-                    } catch (Exception ex) {
-                        Logger.getLogger(DeleteCiruja.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    this.repaint();
                 }
             }
+            try {
+                CirujaDAO.delete(idCiruja);
+            } catch (Exception e) {
+                System.out.println("error al borrar: " + e.getMessage());
+            }
+            addComponents();
+            this.repaint();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-    public void addComponents() throws Exception {
+
+    public void addComponents() {
+        ArrayList<Ciruja> ciruja = new ArrayList<>();
         listModel.clear();
-        for (Ciruja obj : CirujaDAO.getAll()) {
+        try {
+            ciruja = CirujaDAO.getAll();
+        } catch (Exception e) {
+            System.out.println("Error al traer todo " + e.getMessage());
+        }
+        for (Ciruja obj : ciruja) {
             listModel.addElement(obj);
         }
     }

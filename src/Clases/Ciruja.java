@@ -22,6 +22,7 @@ public class Ciruja implements Serializable{
     private String nombre;
 
     public Ciruja() {
+        materiales = new ArrayList<>();
     }
 
     public Ciruja(String especialidad, Calendar fechaIngreso, int id, ArrayList<Material> materiales, String nombre) {
@@ -81,7 +82,7 @@ public class Ciruja implements Serializable{
     }
     
     public Material juntar(Material material){
-        if (especialidad.equalsIgnoreCase(material.getTipo())){
+        if (especialidad.equals(material.getTipo())){
             double pesoActualCarro = carros.getCargaActual();
             if ((pesoActualCarro + material.getPeso())<=carros.getCapacidad()){
                 carros.setCargaActual(pesoActualCarro + material.getPeso());

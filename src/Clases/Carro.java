@@ -11,6 +11,7 @@ import java.io.Serializable;
  * @author admin
  */
 public class Carro implements Serializable {
+
     private final int capacidad = 200;
     private int id;
     private double cargaActual;
@@ -28,7 +29,11 @@ public class Carro implements Serializable {
     }
 
     public void setCargaActual(double capacidadActual) {
-        this.cargaActual = capacidadActual;
+        if (cargaActual + capacidadActual > 200) {
+            this.cargaActual = 200;
+        } else {
+            this.cargaActual += capacidadActual;
+        }
     }
 
     public int getCapacidad() {
@@ -42,6 +47,5 @@ public class Carro implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
+
 }

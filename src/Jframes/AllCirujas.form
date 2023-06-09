@@ -97,7 +97,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JList&lt;Ciruja&gt;(listModel);&#xd; &#xd; "/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="for (Ciruja obj : CirujaDAO.getAll()) {//ac&#xe1; tengo que traer a todos los cirujas&#xd;&#xa;    listModel.addElement(obj);&#xd;&#xa;}&#xd;&#xa;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="listModel.clear();&#xd;&#xa;for (Ciruja obj : Main.cooperativa.getCirujas()) {//ac&#xe1; tengo que traer a todos los cirujas&#xd;&#xa;    listModel.addElement(obj);&#xd;&#xa;}&#xd;&#xa;"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Ciruja&gt;"/>
           </AuxValues>
         </Component>

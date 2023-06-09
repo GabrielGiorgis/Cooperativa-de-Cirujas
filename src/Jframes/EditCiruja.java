@@ -2,6 +2,7 @@ package Jframes;
 
 import Clases.*;
 import persistencia.*;
+import Proyecto_p2.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,19 +32,16 @@ public class EditCiruja extends javax.swing.JPanel {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() throws Exception {
+    private void initComponents() {
 
         jLabel4 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
         nameField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        for (Ciruja obj : CirujaDAO.getAll()) {     
+        for (Ciruja obj : Main.cooperativa.getCirujas()) {     
             listModel.addElement(obj); 
         } //Hay que recibir a todos los cirujas desde la base de datos
-        javax.swing.JList<Ciruja> jList1 = new JList<Ciruja>(listModel);
- 
- ;
         jButton3 = new javax.swing.JButton();
         specialtyField = new javax.swing.JComboBox<>();
         joiningDate = new javax.swing.JFormattedTextField();
@@ -51,6 +49,7 @@ public class EditCiruja extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
+        jList1 = new JList<Ciruja>(listModel);
         materialField = new JList<Material>(materialModel);
 
         ;
@@ -139,7 +138,7 @@ public class EditCiruja extends javax.swing.JPanel {
 
                 if (value instanceof Material) {
                     Material newMaterial = (Material) value;
-                    setText(newMaterial.getTipo());
+                    setText(newMaterial.getTipo() + " (" + newMaterial.getPeso() + "kg)");
                 }
 
                 return this;
@@ -231,45 +230,75 @@ public class EditCiruja extends javax.swing.JPanel {
     }//GEN-LAST:event_nameFieldActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String name = nameField.getText();
-        String specialty = specialtyField.getSelectedItem().toString();
-        String joined = joiningDate.getText();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Calendar calendar = Calendar.getInstance();
-        try {
-            Date date = dateFormat.parse(joined);
-            calendar.setTime(date);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Fecha ingresada incorrectamente");
-        }
-        ArrayList<Material> materiales = new ArrayList<>();
+        if (jList1.getSelectedValue() != null) {
+            String name = nameField.getText();
+            String specialty = specialtyField.getSelectedItem().toString();
+            String joined = joiningDate.getText();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Calendar calendar = Calendar.getInstance();
+            try {
+                Date date = dateFormat.parse(joined);
+                calendar.setTime(date);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Fecha ingresada incorrectamente");
+            }
+            ArrayList<Material> materiales = new ArrayList<>();
 
-        for (int i = 0; i < materialModel.getSize(); i++) {
-            materiales.add(materialModel.getElementAt(i));
-        }
+            for (int i = 0; i < materialModel.getSize(); i++) {
+                materiales.add(materialModel.getElementAt(i));
+            }
 
-        int cirujaId = jList1.getSelectedValue().getId();
-        Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
-//        Main.cooperativa.nuevoCarro(cirujaId);
-//ACA HAY QUE EDITAR EL CIRUJA
-        try {
-            CirujaDAO.update(ciruja);
-        } catch (Exception e) {
-            System.out.println(e);
+            int cirujaId = jList1.getSelectedValue().getId();
+            Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
+
+            try {
+                CirujaDAO.update(ciruja);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+            //Necesito tener el indice del ciruja que tiene el idCiruja
+            int indiceLocal = 0;
+            for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == cirujaId) {
+                    indiceLocal = i;
+                }
+            }
+
+            Ciruja ciruja1 = Main.cooperativa.getCirujas().get(indiceLocal);
+            ciruja1.setNombre(name);
+            ciruja1.setEspecialidad(specialty);
+            ciruja1.setFechaIngreso(calendar);
+
+            nameField.setText("");
+            specialtyField.setSelectedItem("Ninguna");
+            joiningDate.setText("dd/MM/aaaa");
+            materialModel.clear();
+            addComponents();
+            JOptionPane.showMessageDialog(null, "Ciruja modificado con éxito");
         }
-        nameField.setText("");
-        specialtyField.setSelectedItem("Ninguna");
-        joiningDate.setText("");
-        listModel.clear();
-        JOptionPane.showMessageDialog(null, "Ciruja modificado con éxito");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jList1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jList1FocusGained
+        int idCiruja = jList1.getSelectedValue().getId();
 
-        nameField.setText(jList1.getSelectedValue().getNombre());
-        specialtyField.setSelectedItem(jList1.getSelectedValue().getEspecialidad());
-        joiningDate.setText(jList1.getSelectedValue().getFechaIngreso().toString());
-        ArrayList<Material> material = jList1.getSelectedValue().getMateriales();
+        //Necesito tener el indice del ciruja que tiene el idCiruja
+        int indiceLocal = 0;
+        for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+            if (Main.cooperativa.getCirujas().get(i).getId() == idCiruja) {
+                indiceLocal = i;
+            }
+        }
+        Ciruja ciruja = Main.cooperativa.getCirujas().get(indiceLocal);
+        nameField.setText(ciruja.getNombre());
+        specialtyField.setSelectedItem(ciruja.getEspecialidad());
+
+        Calendar fechaIngreso = ciruja.getFechaIngreso();
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yy");
+        String fechaFormateada = formatoFecha.format(fechaIngreso.getTime());
+
+        joiningDate.setText(fechaFormateada);
+        ArrayList<Material> material = ciruja.getMateriales();
         materialModel.clear();
         for (int i = 0; i < material.size(); i++) {
             materialModel.addElement(material.get(i));
@@ -278,9 +307,24 @@ public class EditCiruja extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (materialField.getSelectedValue() != null) {
+            int indiceLocal = 0;
+            for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == jList1.getSelectedValue().getId()) {
+                    indiceLocal = i;
+                }
+            }
+
+            Ciruja ciruja = Main.cooperativa.getCirujas().get(indiceLocal);
+
             for (int i = 0; i < materialModel.getSize(); i++) {
-                if (materialField.getSelectedValue().getTipo().equals(materialModel.getElementAt(i).getTipo())) {
+                if (materialField.getSelectedValue().getIdExtraccion() == ciruja.getMateriales().get(i).getIdExtraccion()) {
                     materialModel.remove(i);
+                    try {
+                        MaterialDAO.deleteOne(ciruja.getId(), ciruja.getMateriales().get(i).getIdExtraccion());
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                    ciruja.getMateriales().remove(i);
                 }
             }
         }
@@ -288,23 +332,63 @@ public class EditCiruja extends javax.swing.JPanel {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         String input = "";
-        if (specialtyField.getSelectedItem() != "Ninguna") {
-            input = (String) specialtyField.getSelectedItem();
-        } else {
-            input = JOptionPane.showInputDialog(null, "Ingrese el nombre del material");
-        }
-        String weight = JOptionPane.showInputDialog(null, "Ingrese el peso encontrado");
+        if (jList1.getSelectedValue() != null) {
 
-        if (input.equals("") || weight.equals("")) {
-            JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+            if (specialtyField.getSelectedItem() != "Ninguna") {
+                input = specialtyField.getSelectedItem().toString();
+            } else {
+                input = JOptionPane.showInputDialog(null, "Ingrese el tipo de material");
+            }
+
+            String weight = JOptionPane.showInputDialog(null, "Ingrese el peso del material");
+            double pesoTotal = 0;
+            for (int i = 0; i < materialModel.getSize(); i++) {
+                pesoTotal += materialModel.getElementAt(i).getPeso();
+            }
+            int indiceLocal = 0;
+            for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == jList1.getSelectedValue().getId()) {
+                    indiceLocal = i;
+                }
+            }
+
+            if (pesoTotal + Double.parseDouble(weight) > 200) {
+                JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + pesoTotal);
+                weight = "";
+            } else {
+                pesoTotal = Double.parseDouble(weight);
+                if (input.equals("") || weight.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Datos ingresados incorrectamente, intente de nuevo");
+                }
+
+                //Lo de abajo necesita settear un valor en funcion a la cantidad de materiales de la base, no el tamaño del model
+                int cantMateriales = 0;
+                try {
+                    cantMateriales = MaterialDAO.getAll().size();
+                } catch (Exception e) {
+                }
+                Material material = new Material(Double.parseDouble(weight), input, (cantMateriales + 1));
+                materialModel.addElement(material);
+                Main.cooperativa.getCirujas().get(indiceLocal).getMateriales().add(material);
+                try {
+                    MaterialDAO.create(jList1.getSelectedValue().getId(), material);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         } else {
-            materialModel.addElement(new Material(Double.parseDouble(weight), input, listModel.getSize()));
+            JOptionPane.showMessageDialog(null, "Seleccione un ciruja");
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    public void addComponents() throws Exception {
+    public void addComponents() {
         listModel.clear();
-        ArrayList<Ciruja> cirujas = CirujaDAO.getAll();
+        ArrayList<Ciruja> cirujas = new ArrayList<>();
+        try {
+            cirujas = CirujaDAO.getAll();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         for (Ciruja obj : cirujas) {
             listModel.addElement(obj);
         }
@@ -322,8 +406,8 @@ public class EditCiruja extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JFormattedTextField joiningDate;
-    private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JList<Material> materialField;
+    private javax.swing.JList<Ciruja> jList1;
     private javax.swing.JTextField nameField;
     private javax.swing.JComboBox<String> specialtyField;
     // End of variables declaration//GEN-END:variables
@@ -331,4 +415,5 @@ public class EditCiruja extends javax.swing.JPanel {
     DefaultListModel<Ciruja> listModel = new DefaultListModel<>();
     DefaultListModel<Material> materialModel = new DefaultListModel<>();
     CirujaDAO CirujaDAO = new CirujaDAO();
+    MaterialDAO MaterialDAO = new MaterialDAO();
 }
