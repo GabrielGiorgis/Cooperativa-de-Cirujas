@@ -42,6 +42,9 @@ public class EditCiruja extends javax.swing.JPanel {
         for (Ciruja obj : Main.cooperativa.getCirujas()) {     
             listModel.addElement(obj); 
         } //Hay que recibir a todos los cirujas desde la base de datos
+        jList1 = new JList<Ciruja>(listModel);
+ 
+ 
         jButton3 = new javax.swing.JButton();
         specialtyField = new javax.swing.JComboBox<>();
         joiningDate = new javax.swing.JFormattedTextField();
@@ -49,7 +52,6 @@ public class EditCiruja extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList1 = new JList<Ciruja>(listModel);
         materialField = new JList<Material>(materialModel);
 
         ;
@@ -109,10 +111,11 @@ public class EditCiruja extends javax.swing.JPanel {
         });
 
         specialtyField.setEditable(true);
-        specialtyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguna", "Cartón y papel", "Vidrio", "metales" }));
+        specialtyField.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Ninguna", "Cartón y papel", "Vidrio", "Metales" }));
         specialtyField.setToolTipText("Seleccionar tipo");
 
-        joiningDate.setText("dd/mm/aaaa\n");
+        joiningDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd MM yyyy"))));
+        joiningDate.setText("dd/mm/aaaa");
         joiningDate.setToolTipText("");
         joiningDate.setInheritsPopupMenu(true);
         joiningDate.setName("joinDate"); // NOI18N
@@ -230,7 +233,7 @@ public class EditCiruja extends javax.swing.JPanel {
     }//GEN-LAST:event_nameFieldActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (jList1.getSelectedValue() != null) {
+        if (ciruja != null) {
             String name = nameField.getText();
             String specialty = specialtyField.getSelectedItem().toString();
             String joined = joiningDate.getText();
@@ -248,7 +251,7 @@ public class EditCiruja extends javax.swing.JPanel {
                 materiales.add(materialModel.getElementAt(i));
             }
 
-            int cirujaId = jList1.getSelectedValue().getId();
+            int cirujaId = ciruja.getId();
             Ciruja ciruja = new Ciruja(specialty, calendar, cirujaId, materiales, name);
 
             try {
@@ -281,6 +284,7 @@ public class EditCiruja extends javax.swing.JPanel {
 
     private void jList1FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jList1FocusGained
         int idCiruja = jList1.getSelectedValue().getId();
+        ciruja = (Ciruja) jList1.getSelectedValue();
 
         //Necesito tener el indice del ciruja que tiene el idCiruja
         int indiceLocal = 0;
@@ -303,13 +307,15 @@ public class EditCiruja extends javax.swing.JPanel {
         for (int i = 0; i < material.size(); i++) {
             materialModel.addElement(material.get(i));
         }
+        jButton2.requestFocusInWindow();
+        jList1.clearSelection();
     }//GEN-LAST:event_jList1FocusGained
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (materialField.getSelectedValue() != null) {
             int indiceLocal = 0;
             for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
-                if (Main.cooperativa.getCirujas().get(i).getId() == jList1.getSelectedValue().getId()) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == ciruja.getId()) {
                     indiceLocal = i;
                 }
             }
@@ -327,12 +333,13 @@ public class EditCiruja extends javax.swing.JPanel {
                     ciruja.getMateriales().remove(i);
                 }
             }
-        }
+        }//el id de extracción está mal seleccionado para borrar.
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         String input = "";
-        if (jList1.getSelectedValue() != null) {
+        
+        if (ciruja != null) {
 
             if (specialtyField.getSelectedItem() != "Ninguna") {
                 input = specialtyField.getSelectedItem().toString();
@@ -347,13 +354,13 @@ public class EditCiruja extends javax.swing.JPanel {
             }
             int indiceLocal = 0;
             for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
-                if (Main.cooperativa.getCirujas().get(i).getId() == jList1.getSelectedValue().getId()) {
+                if (Main.cooperativa.getCirujas().get(i).getId() == ciruja.getId()) {
                     indiceLocal = i;
                 }
             }
 
             if (pesoTotal + Double.parseDouble(weight) > 200) {
-                JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + pesoTotal);
+                JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + (200 - pesoTotal)+ "kg");
                 weight = "";
             } else {
                 pesoTotal = Double.parseDouble(weight);
@@ -371,7 +378,7 @@ public class EditCiruja extends javax.swing.JPanel {
                 materialModel.addElement(material);
                 Main.cooperativa.getCirujas().get(indiceLocal).getMateriales().add(material);
                 try {
-                    MaterialDAO.create(jList1.getSelectedValue().getId(), material);
+                    MaterialDAO.create(ciruja.getId(), material);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -416,4 +423,5 @@ public class EditCiruja extends javax.swing.JPanel {
     DefaultListModel<Material> materialModel = new DefaultListModel<>();
     CirujaDAO CirujaDAO = new CirujaDAO();
     MaterialDAO MaterialDAO = new MaterialDAO();
+    Ciruja ciruja = new Ciruja();
 }

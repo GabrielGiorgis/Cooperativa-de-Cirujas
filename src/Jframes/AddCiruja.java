@@ -92,8 +92,8 @@ public class AddCiruja extends javax.swing.JPanel {
 
         jLabel3.setText("Fecha de ingreso");
 
-        joiningDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
-        joiningDate.setText("dd/MM/aaaa");
+        joiningDate.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("d/M/yyyy"))));
+        joiningDate.setText("dd/mm/aaaa");
         joiningDate.setToolTipText("");
         joiningDate.setInheritsPopupMenu(true);
         joiningDate.setName("joinDate"); // NOI18N
@@ -297,7 +297,8 @@ public class AddCiruja extends javax.swing.JPanel {
             pesoTotal += listModel.getElementAt(i).getPeso();
         }
         if (pesoTotal + Double.parseDouble(weight) > 200) {
-            JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + pesoTotal);weight = "";
+            JOptionPane.showMessageDialog(null, "El material excede la capacidad máxima.\nCapacidad actual: " + (200 - pesoTotal) + "kg");
+            weight = "";
         } else {
             pesoTotal = Double.parseDouble(weight);
             if (input.equals("") || weight.equals("")) {

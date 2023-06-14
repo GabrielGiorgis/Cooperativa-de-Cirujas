@@ -176,6 +176,7 @@ public class AllCirujas extends javax.swing.JPanel {
         for (int i = 0; i < Main.cooperativa.getCirujas().size(); i++) {
             if (Main.cooperativa.getCirujas().get(i).getId() == ciruja.getId()) {
                 indiceLocal = i;
+                System.out.println("Id ciruja: " + i);
             }
         }
         Double sueldo = Main.cooperativa.liquidar(indiceLocal);

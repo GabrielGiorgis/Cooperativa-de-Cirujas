@@ -22,9 +22,9 @@ public final class CirujaDAO extends DAO {
 
             String sql = "INSERT INTO Ciruja(nombre, especialidad, fechaIngreso) VALUES ('" + ciruja.getNombre() + "', '" + ciruja.getEspecialidad() + "', '" + new java.sql.Date(ciruja.getFechaIngreso().getTime().getTime()) + "')";
             agregarModificarEliminar(sql);
-            System.out.println("flag 1");
             System.out.println(sql);
             CarroDAO carroDAO = new CarroDAO();
+            System.out.println("id carro: "+ciruja.getId());
             carroDAO.create(ciruja.getId(), carro);
 
         } catch (Exception e) {

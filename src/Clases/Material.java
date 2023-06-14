@@ -1,10 +1,9 @@
-
 package Clases;
 
 import java.io.Serializable;
 
-
 public class Material implements Serializable {
+
     private double peso;
     private String tipo;
     private int idExtraccion;
@@ -41,11 +40,9 @@ public class Material implements Serializable {
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
-    public void descuento(){
-        if (tipo.equals("papel")){
-            peso = peso - ((peso*5)/100);
-        }
+
+    public void descuento() {
+        peso -= (peso * 5) / 100;
     }
-    
+
 }
